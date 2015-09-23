@@ -1,5 +1,5 @@
 # Raspberry Pi VPN Client router
-**Route all incoming traffic through an OpenVPN **
+*Route all incoming traffic through an OpenVPN SSL VPN*
 
 The Pi-hush is a Raspberry Pi router that will send all incoming traffic received through a WLAN or LAN interface through an OpenVPN tunnel stablished trough another LAN interface
 It uses different led colours to indicate status, link on, acquired IP, access to internet, VPN established...
@@ -9,6 +9,7 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 - WLAN USB Dongle Edimax EW-7811Un [Realtek RTL8188CUS]
 - Apple USB - Ethernet Adapter
 - LED board: https://www.piborg.org/ledborg/  (OPTIONAL)
+- Soft buttton (OPTIONAL)
 
 ## Target
 **eth0** (the embedded ethernet port)
@@ -40,8 +41,8 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 * [wlan0 as an access point](#wlan0-as-an-access-point)
 * [OpenVPN client configuration](#openvpn-client-configuration)
 * [Iptables configuration](#iptables-configuration)
-* [Enhancement: Use a muticolor led for network monitoring](#enhancement:-use-a-muticolor-led-for-network-monitoring)
-* [Enhancement: Shutdown button](#enhancement:-shutdown-button)
+* [Enhancement: Use a muticolor led for network monitoring](https://github.com/jofrep/pi-hush/blob/master/README-leds.md)
+* [Enhancement: Shutdown button](https://github.com/jofrep/pi-hush/blob/master/README-shutdown.md)
 * [References](#references)
 
 ## Raspberry Pi first boot
@@ -106,7 +107,7 @@ dhcp-option=wlan0,6,172.16.1.1 # our local DNS Server
 dhcp-authoritative # force clients to grab a new IP
 ```
 
-If you plan to use [pi-hole](http://jacobsalmela.com/block-millions-ads-network-wide-with-a-raspberry-pi-hole-2-0/), a highly recommended DNS and Malware blocker, add also
+If you plan to use [pi-hole](http://jacobsalmela.com/block-millions-ads-network-wide-with-a-raspberry-pi-hole-2-0/), a highly recommended DNS and Malware blocker, add also the entry below. 
 ```
 addn-hosts=/etc/pihole/gravity.list
 ```
@@ -137,7 +138,7 @@ iface wlan0 inet static
 ```
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 ```
-* Ennsure persistency eddting /etc/sysctl.conf and seeting forwarding on:
+* Ensure persistency eddting /etc/sysctl.conf and seeting forwarding on:
 ```
 net.ipv4.ip_forward=1
 ```
@@ -149,6 +150,7 @@ sudo reboot
 ## wlan0 as an access point
 
 * Follow instructions below to build hostapd. Instructions taken from (http://www.jenssegers.be/blog/43/Realtek-RTL8188-based-access-point-on-Raspberry-Pi)
+
 *WARNING:* if you use a different WLAN dongle skip this and finds the right way to configure it as an Access Point. Perhaps the default hostpad is good enough for you
 ```
 sudo apt-get autoremove hostapd
