@@ -1,0 +1,23 @@
+# data files
+*.log
+*.csv
+*.out
+
+# pki
+*.cer
+*.crt
+*.pfx
+*.pem
+*.key
+
+#j2me
+*.jad
+*.jar
+
+# binaries files
+.exe
+.img
+.zip
+.rar
+.gz
+.tar
