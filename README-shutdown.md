@@ -7,7 +7,6 @@ We connect GPIO 21/PIN 40 to a softbutton connected also to GROUND (i.e. PIN 39)
 * Automatic installation
 Execute:
 ```
-curl -s "https://raw.githubusercontent.com/jofrep/pi-hush/master/install-shutdownservice.sh" | bash
 ```
 
 * Shutdown Service
