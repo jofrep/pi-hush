@@ -4,12 +4,14 @@
 The Pi-hush is a Raspberry Pi router that will send all incoming traffic received through a WLAN or LAN interface through an OpenVPN tunnel stablished trough another LAN interface
 It uses different led colours to indicate status, link on, acquired IP, access to internet, VPN established...
 
-## Hardware used (same components from other vendors should work)
+## Hardware used 
+
 - Raspberry Pi 2
 - WLAN USB Dongle Edimax EW-7811Un [Realtek RTL8188CUS]
 - Apple USB - Ethernet Adapter
-- LED board: https://www.piborg.org/ledborg/  (OPTIONAL)
+- LED board: https://www.piborg.org/ledborg/ (OPTIONAL)
 - Soft buttton (OPTIONAL)
+(components from other vendors might also work)
 
 ## Target
 **eth0** (the embedded ethernet port)
@@ -26,13 +28,12 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 
 **wlan0** (USB WLAN dongle)
 	- Creates WLAN network
-	- SSID "blue"
 	- WPA2
   - Fixed IP 172.16.1.1
   - Offers DHCP IPS from 172.16.1.2 to 172.16.1.199
   - Offers DNS service
 
-### Table of Contents
+## Table of Contents
 
 * [Raspberry Pi first boot](#raspberry-pi-first-boot)
 * [Clean up, update and install necessary modules](#clean-up,-update-and-install-necessary-modules)
@@ -41,8 +42,8 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 * [wlan0 as an access point](#wlan0-as-an-access-point)
 * [OpenVPN client configuration](#openvpn-client-configuration)
 * [Iptables configuration](#iptables-configuration)
-* [Enhancement: Use a muticolor led for network monitoring](https://github.com/jofrep/pi-hush/blob/master/README-leds.md)
-* [Enhancement: Shutdown button](https://github.com/jofrep/pi-hush/blob/master/README-shutdown.md)
+* [Enhancement: Use a muticolor led for network monitoring](README-leds.md)
+* [Enhancement: Shutdown button](README-shutdown.md)
 * [References](#references)
 
 ## Raspberry Pi first boot
@@ -54,22 +55,21 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 
 ## Clean up, update and install necessary modules
 
-* Remove GUI packages (*Warning* this will take some time)
-I remove all GUI stuff as I don´t use it and it saves 2GB. This is not necessary and you can skip this step if you are unsure or want to keep them.
-```
-sudo apt-get install deborphan
-sudo apt-get autoremove --purge libx11-.* lxde-.* raspberrypi-artwork xkb-data omxplayer penguinspuzzle sgml-base xml-core alsa-.* cifs-.* samba-.* fonts-.* desktop-* gnome-.*
-sudo apt-get autoremove --purge $(deborphan)
-sudo apt-get autoremove --purge
+* Remove GUI packages (*Warning* this will take some time). I remove all GUI packages as I don´t use them and it saves more than 2GB. This is not necessary and you can skip this step if you are unsure or want to keep them.
+```bash
+sudo apt-get -y install deborphan
+sudo apt-get -y autoremove --purge libx11-.* lxde-.* raspberrypi-artwork xkb-data omxplayer penguinspuzzle sgml-base xml-core alsa-.* cifs-.* samba-.* fonts-.* desktop-* gnome-.*
+sudo apt-get -y autoremove --purge $(deborphan)
+sudo apt-get -y autoremove --purge
 sudo apt-get autoclean
 ```
 * Update firmware (boot partition)
-```
+```bash
 sudo rpi-update 
 sudo reboot
 ```
-* Remove packages that might conflict and update the rest
-```
+* Remove packages that might conflict with the new ones, install required packages and update the rest.
+```bash
 sudo apt-get -y remove bind9 isc-dhcp-server 
 sudo apt-get -y update
 sudo apt-get -y upgrade 
@@ -79,8 +79,8 @@ sudo apt-get -y install dnsmasq openvpn tcpdump iw bridge-utils dos2unix python-
 
 ## Configure dnsmasq
 
-* Edit the file /etc/dnsmasq.d/dnsmasq.custom.conf  and replace it's content with
-```
+* Edit the file /etc/dnsmasq.d/dnsmasq.custom.conf  and replace it's content with:
+```bash
 # Interfaces
 interface=eth1
 interface=wlan0
@@ -108,14 +108,15 @@ dhcp-authoritative # force clients to grab a new IP
 ```
 
 If you plan to use [pi-hole](http://jacobsalmela.com/block-millions-ads-network-wide-with-a-raspberry-pi-hole-2-0/), a highly recommended DNS and Malware blocker, add also the entry below. 
-```
+```bash
 addn-hosts=/etc/pihole/gravity.list
 ```
+Have in mind that the current gravity.sh script from [pi-hole](http://jacobsalmela.com/block-millions-ads-network-wide-with-a-raspberry-pi-hole-2-0/) creates a host file with all IPs of all network interfaces. I recommend you use my own version of the gravity.sh scripts that allows you to define the IP where to redirect all requests: (https://raw.githubusercontent.com/jofrep/pi-hole/IP-as-input-parameter/gravity.sh). Just execute ./gravity 123.123.123.123  (but using your target IP)
    
 ## Network configuration
 
 * Edit /etc/network/interfaces and replace it with the content below:
-```
+```bash
 auto lo
 iface lo inet loopback
 
@@ -135,15 +136,15 @@ iface wlan0 inet static
         netmask 255.255.255.0
 ```
 * Set routing
-```
+```bash
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 ```
 * Ensure persistency eddting /etc/sysctl.conf and seeting forwarding on:
-```
+```bash
 net.ipv4.ip_forward=1
 ```
 * Reboot the RPi
-```
+```bash
 sudo reboot
 ```
 
@@ -152,7 +153,7 @@ sudo reboot
 * Follow instructions below to build hostapd. Instructions taken from (http://www.jenssegers.be/blog/43/Realtek-RTL8188-based-access-point-on-Raspberry-Pi)
 
 *WARNING:* if you use a different WLAN dongle skip this and finds the right way to configure it as an Access Point. Perhaps the default hostpad is good enough for you
-```
+```bash
 sudo apt-get autoremove hostapd
 wget https://github.com/jenssegers/RTL8188-hostapd/archive/v2.0.tar.gz
 tar -zxvf v2.0.tar.gz
@@ -161,22 +162,23 @@ sudo make
 sudo make install
 ```
 * Edit the file /etc/init.d/hostapd and add to (DAEMON_CONF=) the following line:
-```
+```bash
 DAEMON_CONF=/etc/hostapd/hostapd.conf
 ```
 
 * Edit the file hostapd.conf /etc/hostapd/hostapd.confand update the following values 
-```
+```bash
 ssid=CHOOSE-SOME-NAME
 wpa_passphrase=longrandompasswordb4a1d29d5eaa92a26270e8acfc4
-```
+```bash
 * restart service
-```
+```bash
 sudo service hostapd restart
 ```
 * in case of errors execute
+```bash
 sudo hostapd /etc/hostapd/hostapd.conf
-
+```
 
 ## OpenVPN client configuration
 
@@ -184,15 +186,15 @@ The assumption is that you already have an OpenVPN server to connect to. The Ras
 * Copy all configuration files (certs, key, ta, config) to /etc/openvpn
 * Rename configuration file to openvpn.conf
 * Start OpenVPN and ensure it's working fine
-```
+```bash
 sudo service openvpn start   
 ```
 * Remove openvpn from start
-```
+```bash
 sudo update-rc.d openvpn remove
 ```
 * Set script to delay OpenVPN start for 30 segons  (/home/pi/start-openvpn-delay.sh)
-```
+```bash
 #!/bin/sh
 
 # Script used at boot to start openvpn with a 30 seconds delay to allow end user to go through login pages
@@ -200,13 +202,13 @@ sleep 30
 sudo service openvpn start
 ```
 * Make file executable
-```
+```bash
 chmod +x /home/pi/start-openvpn-delay.sh
 ```
 
 ## Iptables configuration
  Create file /usr/local/bin/iptables.onlynat.sh with contents below
-``` 
+```bash 
 # Set default policies for INPUT, FORWARD and OUTPUT chains
 sudo iptables -P INPUT DROP
 sudo iptables -P FORWARD DROP
@@ -243,11 +245,11 @@ sudo iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPT-Drop: "
 sudo iptables -A LOGGING -j DROP
 ```
 * Make file executable
-```
+```bash
 sudo chmod +x /usr/local/bin/iptables.onlynat.sh
 ```
 * Add the following in /etc/rc.local
-```
+```bash
 echo "Loading iptables for IP masquerading"
 /usr/local/bin/iptables.onlynat.sh
 
