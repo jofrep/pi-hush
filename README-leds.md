@@ -3,11 +3,11 @@
 
 We use [Ledborg](https://www.piborg.org/ledborg) to display different colors based on the network status
 
-No IP or link in eth0     => Blink RED
-Autoconfiguration IP      => Blink Magenta
-IP set but not access     => Fix YELLOW
-Direct access to Internet => Alternate GREEN/YELLOW
-OpenVPN stablished        => Fix GREEN
+* No IP or link in eth0     => Blink RED
+* Autoconfiguration IP      => Blink Magenta
+* IP set but not access     => Fix YELLOW
+* Direct access to Internet => Alternate GREEN/YELLOW
+* OpenVPN stablished        => Fix GREEN
 
 ## Environment preparation
 * Install the following
