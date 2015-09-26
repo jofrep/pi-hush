@@ -11,6 +11,7 @@ It uses different led colours to indicate status, link on, acquired IP, access t
 - Apple USB - Ethernet Adapter
 - LED board: https://www.piborg.org/ledborg/ (OPTIONAL)
 - Soft buttton (OPTIONAL)
+
 (components from other vendors might also work)
 
 ## Target
@@ -256,6 +257,9 @@ echo "Loading iptables for IP masquerading"
 echo "Delayed OpenVPN start"
 nohup /home/pi/admin/start-openvpn-delay.sh &
 ```
+## [Enhancement: Use a muticolor led for network monitoring](README-leds.md)
+
+## [Enhancement: Shutdown button](README-shutdown.md)
 
 ## References
 * (http://makezine.com/projects/browse-anonymously-with-a-diy-raspberry-pi-vpntor-router/)

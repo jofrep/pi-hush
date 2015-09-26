@@ -148,14 +148,14 @@ ST_IP      = 3  # Fix YELLOW
 ST_DIRECT  = 4  # Alternate GREEN - YELLOW
 ST_OPENVPN = 5  # Fix GREEN
 ethip      = "not set"
-vpndomain = 'vpn.palaurecha.com'
+testdomain = 'google.com'
 
 try:
     while True:
         eth0on  = ST_NOLINK
         dnsok = False
         try:            
-            socket.gethostbyname_ex(vpndomain)
+            socket.gethostbyname_ex(testdomain)
             dnsok = True
         except Exception as e:
             pass
